@@ -1,0 +1,98 @@
+<html>
+    <head>
+        <title>IS668 Gradebook</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+        <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    </head>
+
+    <body>
+        <script>
+            $(document).ready(function() {
+                $('#students').DataTable({
+                    "info": false,
+                    "paging": false,
+                    "searching": false,
+                    "lengthChange": false,
+                    "ordering": true,
+                    columnDefs: [{
+                        orderable: false,
+                        targets: "no-sort"
+                    }]
+
+                });
+            });
+        </script>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Gradebook IS668</a><a class="navbar-brand" href="#">{{courseinfo.coursename}} - {{courseinfo.courseinstructor}}</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('logout') }}">Log out</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('login') }}">Log in</a></li>
+                    {% endif %}
+                    </ul>
+            </div>
+        </nav>
+        {% if current_user.is_authenticated %}
+        <div class="btn-toolbar mt-2 mb-2 ml-2" role="toolbar">
+            <div class="btn-group mr-2" role="group">
+                <a href="{{ url_for('index') }}" class="btn btn-info" role="button">Home</a>
+            </div>
+            <div class="btn-group mr-2" role="group">
+                <a href="{{ url_for('roster') }}" class="btn btn-info" role="button">View Class Roster</a>
+            </div>
+            <div class="btn-group mr-2" role="group">
+                <a href="{{ url_for('assignments') }}" class="btn btn-info" role="button">View Class Assignments</a>
+            </div>
+            <div class="btn-group" role="group">
+                <a href="{{ url_for('viewgrades') }}" class="btn btn-info" role="button">View Class Grades</a>
+            </div>
+        </div>
+        <h2 align="center">{{ assignment.assignmentname }}</h2>
+
+        <div class="container">
+            <table id="students" class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th class="no-sort">Assignment Grade</th>
+                        <th class="no-sort">Add/Update Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for gradeitem in gradelist %}
+                        <tr>
+                            <td>{{ gradeitem[1] }}</td>
+                            <td>{{ gradeitem[2] }}</td>
+                            <form class="form-group" method="POST" action="{{ url_for('viewassignment',assignmentid=assignment.assignmentid ) }}">
+                                <td>
+                                    <input type="number" name="assignmentgrade" id="assignmentgrade" value="{{ gradeitem[3] }}" title="Enter Grade from 0 to 100" placeholder="None" min="0" max="100" required>
+                                </td>
+                                <td>
+                                    <input type=hidden id="assignmentnum" name="assignmentnum" value="{{ assignment.assignmentid }}">
+                                    <input type=hidden id="studentnum" name="studentnum" value="{{ gradeitem[0] }}">
+                                    <button type="submit" class="btn" title="Add/Update Grade"><i class="fas fa-plus"></i></button>
+                                </td>
+                            </form>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div><!-- /.container -->
+        {% endif %}
+    </body>
+</html>

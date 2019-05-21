@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <title>IS668 Gradebook</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    </head>
+
+    <body>
+        <nav class="navbar navbar-dark bg-dark">
+            {% if current_user.is_authenticated %}
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Gradebook IS668</a><a class="navbar-brand" href="#">{{courseinfo.coursename}} - {{courseinfo.courseinstructor}}</a>
+                </div>
+            {% else %}
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Gradebook IS668</a>
+                </div>
+            {% endif %}
+            <div>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('logout') }}">Log out</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('login') }}">Log in</a></li>
+                    {% endif %}
+                    </ul>
+            </div>
+        </nav>
+        <br>
+        <div class="container">
+            <h3 class="text-danger">{{errormessage}}</h3>
+            <a href="{{ url_for('index') }}" class="btn btn-info" role="button">Return Home</a>
+        </div><!-- /.container -->
+    </body>
+</html>

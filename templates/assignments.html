@@ -1,0 +1,118 @@
+<html>
+    <head>
+        <title>IS668 Gradebook</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+        <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    </head>
+
+    <body>
+        <script>
+            $(document).ready(function() {
+                $('#assignments').DataTable({
+                    "info": false,
+                    "paging": false,
+                    "searching": false,
+                    "lengthChange": false,
+                    "ordering": true,
+                    columnDefs: [{
+                        orderable: false,
+                        targets: "no-sort"
+                    }]
+
+                });
+            });
+        </script>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Gradebook IS668</a><a class="navbar-brand" href="#">{{courseinfo.coursename}} - {{courseinfo.courseinstructor}}</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('logout') }}">Log out</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('login') }}">Log in</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+        {% if current_user.is_authenticated %}
+        <div class="btn-toolbar mt-2 mb-2 ml-2" role="toolbar">
+            <div class="btn-group mr-2" role="group">
+                <a href="{{ url_for('index') }}" class="btn btn-info" role="button">Home</a>
+            </div>
+            <div class="btn-group mr-2" role="group">
+                <a href="{{ url_for('roster') }}" class="btn btn-info" role="button">View Class Roster</a>
+            </div>
+            <div class="btn-group" role="group">
+                <a href="{{ url_for('viewgrades') }}" class="btn btn-info" role="button">View Class Grades</a>
+            </div>
+        </div>
+        <h2 align="center">Class Assignments</h2>
+
+        <div class="container">
+            <table id="assignments" class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Assignment Name</th>
+                        <th class="no-sort">Grades</th>
+                        <th class="no-sort">Edit</th>
+                        <th class="no-sort">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for assignment in courseassignments %}
+                    <tr>
+                        <td>{{ assignment.assignmentname }}</td>
+                        <td>
+                            <form action="{{ url_for('viewassignment', assignmentid=assignment.assignmentid) }}" method=get>
+
+                                <button type="submit" class="btn" title="List Assignment Grades"><i class="fas fa-address-book"></i></button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="{{ url_for('assignments') }}" method=post>
+                                <input type=hidden value="{{ assignment.assignmentid }}" name="assignmentid_to_edit">
+                                <input type=hidden id="assignmentselection" name="assignmentselection" value="editassignment">
+                                <button type="submit" class="btn" title="Edit Assignment"><i class="fas fa-user-edit"></i></button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="{{ url_for('assignments') }}" method=post onsubmit="return confirm('Are you sure you want to delete assignment {{assignment.assignmentname}}?');">
+                                <input type=hidden value="{{ assignment.assignmentid }}" name="assignmentid_to_delete">
+                                <input type=hidden id="assignmentselection" name="assignmentselection" value="deleteassignment">
+                                <button type="submit" class="btn" title="Delete Assignment"><i class="fas fa-user-times"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                        <form class="form-group" method="POST" action="{{ url_for('assignments') }}" >
+                            <td>
+                                <input type="text" class="form-control" id="assignmentname" name="assignmentname" placeholder="Assignment Name" maxlength="35" required>
+                            </td>
+                            <td>
+                                <input type=hidden id="assignmentselection" name="assignmentselection" value="addassignment">
+                                <input type="submit" class="btn btn-success mt-2" value="Add Assignment" title="Add new assignment to class">
+                            </td>
+                        </form>
+                        </tr>
+    				</tbody>
+			</table>
+		</div>
+		{% endif %}
+    </body>
+</html>

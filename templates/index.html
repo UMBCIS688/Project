@@ -1,0 +1,55 @@
+<html>
+    <head>
+        <title>IS668 Gradebook</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    </head>
+
+    <body>
+        <nav class="navbar navbar-dark bg-dark">
+            {% if current_user.is_authenticated %}
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Gradebook IS668</a><a class="navbar-brand" href="#">{{courseinfo.coursename}} - {{courseinfo.courseinstructor}}</a>
+                </div>
+            {% else %}
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Gradebook IS668</a>
+                </div>
+            {% endif %}
+            <div>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('logout') }}">Log out</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('login') }}">Log in</a></li>
+                    {% endif %}
+                    </ul>
+            </div>
+        </nav>
+        {% if current_user.is_authenticated %}
+        <div class="container">
+            <div class="row mt-4 mb-4">
+                <div class="col-sm-3"><a href="{{ url_for('roster') }}" class="btn btn-info" role="button">View Class Roster</a></div>
+                <div class="col-*-*">View, Add, Edit and Remove students. Manage individual student grades.</div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-sm-3"><a href="{{ url_for('assignments') }}" class="btn btn-info" role="button">View Class Assignments</a></div>
+                <div class="col-*-*">View, Add, Edit and Remove assignments. Manage individual assignment grades.</div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-sm-3"><a href="{{ url_for('viewgrades') }}" class="btn btn-info" role="button">View Class Grades</a></div>
+                <div class="col-*-*">View all grades and cumulative grades for all students.</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3"><a href="{{ url_for('courseinfo') }}" class="btn btn-info" role="button">Edit Course Information</a></div>
+                <div class="col-*-*">Change class and instructor name for this gradebook.</div>
+            </div>
+        </div>
+        {% endif %}
+    </body>
+</html>

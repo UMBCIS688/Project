@@ -1,0 +1,136 @@
+<html>
+    <head>
+        <title>IS668 Gradebook</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+        <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    </head>
+
+    <body>
+        <script>
+            $(document).ready(function() {
+                $('#roster').DataTable({
+                    "info": false,
+                    "paging": false,
+                    "searching": false,
+                    "lengthChange": false,
+                    "ordering": true,
+                    columnDefs: [{
+                        orderable: false,
+                        targets: "no-sort"
+                    }]
+
+                });
+            });
+        </script>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Gradebook IS668</a><a class="navbar-brand" href="#">{{courseinfo.coursename}} - {{courseinfo.courseinstructor}}</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('logout') }}">Log out</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('login') }}">Log in</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+        {% if current_user.is_authenticated %}
+        <div class="btn-toolbar mt-2 mb-2 ml-2" role="toolbar">
+            <div class="btn-group mr-2" role="group">
+                <a href="{{ url_for('index') }}" class="btn btn-info" role="button">Home</a>
+            </div>
+            <div class="btn-group mr-2" role="group">
+                <a href="{{ url_for('assignments') }}" class="btn btn-info" role="button">View Class Assignments</a>
+            </div>
+            <div class="btn-group" role="group">
+                <a href="{{ url_for('viewgrades') }}" class="btn btn-info" role="button">View Class Grades</a>
+            </div>
+        </div>
+        <h2 align="center">Class Roster</h2>
+        <div class="container">
+            <table id="roster" class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Student ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Major</th>
+                        <th>Email</th>
+                        <th class="no-sort">Grades</th>
+                        <th class="no-sort">Edit</th>
+                        <th class="no-sort">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in courseroster %}
+                    <tr>
+                        <td>{{ student.studentid }}</td>
+                        <td>{{ student.fname }}</td>
+                        <td>{{ student.lname }}</td>
+                        <td>{{ student.major }}</td>
+                        <td><a href="mailto:{{ student.email }}">{{ student.email }}</a></td>
+                        <td>
+                            <form action="{{ url_for('viewstudent', studid=student.studentid ) }}" method=get>
+                                <button type="submit" class="btn" title="List Student Grades"><i class="fas fa-address-book"></i></button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="{{ url_for('roster') }}" method=post>
+                                <input type=hidden value="{{ student.studentid }}" name="studentid_to_edit">
+                                <input type=hidden id="rosterselection" name="rosterselection" value="editstudent">
+                                <button type="submit" class="btn" title="Edit Student"><i class="fas fa-user-edit"></i></button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="{{ url_for('roster') }}" method=post onsubmit="return confirm('Are you sure you want to delete student {{student.fname}} {{student.lname}} from the class?');">
+                                <input type=hidden value="{{ student.studentid }}" name="studentid_to_delete">
+                                <input type=hidden id="rosterselection" name="rosterselection" value="deletestudent">
+                                <button type="submit" class="btn" title="Delete Student"><i class="fas fa-user-times"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+            <table class="table table-striped">
+                <tbody>
+                    <form class="form-group" method="POST" action="{{ url_for('roster') }}" class="was-validated">
+                        <td>
+                            <input type="number" class="form-control" id="studentid" name="studentid" placeholder="student id" min="0" required>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="firstname" name="firstname" placeholder="first name" maxlength="35" required>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="lastname" name="lastname" placeholder="last name" maxlength="35" required>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="studentmajor" name="studentmajor" placeholder="major" maxlength="35" required>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="studentemail" name="studentemail" placeholder="email address" maxlength="256" required>
+                        </td>
+                        <td>
+                            <input type=hidden id="rosterselection" name="rosterselection" value="addstudent">
+                            <input type="submit" class="btn btn-success mt-2" value="Add Student" title="Add Student to Roster">
+                        </td>
+                    </form>
+                </tbody>
+            </table>
+        </div><!-- /.container -->
+        {% endif %}
+    </body>
+</html>

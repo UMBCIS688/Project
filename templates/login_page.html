@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <title>IS668 Gradebook</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    </head>
+
+    <body>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Gradebook IS668</a>
+            </div>
+        </nav>
+
+        <div class="container">
+            {% if error %}
+                <div class="alert alert-danger" role="alert">
+                Incorrect username or password
+                </div>
+            {% endif %}
+            <div class="row">
+                <form action="." method="POST">
+                  <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input class="form-control" id="username" name="username" placeholder="Enter your username" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                  </div>
+                  <button type="submit" class="btn btn-success">Log in</button>
+                </form>
+            </div>
+
+        </div>
+
+    </body>
+</html>
